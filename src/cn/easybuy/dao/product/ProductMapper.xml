@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper  namespace="cn.easybuy.dao.product.ProductMapper">
+  		<insert id="add" parameterType="Product">
+		insert into easybuy_product (name,description,price,stock,categoryLevel1Id,categoryLevel2Id,categoryLevel3Id,fileName,isDelete) 
+				values (#{name},#{description},#{price},#{stock},#{categoryLevel1Id},#{categoryLevel2Id},#{categoryLevel3Id},#{fileName},#{isDelete})
+		</insert>
+		
+		<update id="update" parameterType="Product">
+		update  easybuy_product
+			<trim prefix="set" suffixOverrides=",">
+				<if test="name != null and name!=''">name=#{name},</if>
+				<if test="description != null and description!=''">description=#{description},</if>
+				<if test="price != null and price!=''">price=#{price},</if>
+				<if test="stock != null and stock!=''">stock=#{stock},</if>
+				<if test="categoryLevel1Id != null and categoryLevel1Id !=''">categoryLevel1Id=#{categoryLevel1Id},</if>
+				<if test="categoryLevel2Id != null and categoryLevel2Id !=''">categoryLevel2Id=#{categoryLevel2Id},</if>
+				<if test="categoryLevel3Id != null and categoryLevel3Id !=''">categoryLevel3Id=#{categoryLevel3Id},</if>
+				<if test="fileName != null and fileName !=''" >fileName=#{fileName},</if>
+				<if test="isDelete != null and isDelete !=''">isDelete=#{isDelete},</if>
+			</trim>
+			where id=#{id}
+		</update>
+	
+		<delete id="deleteProductById" parameterType="Integer">
+		delete from easybuy_product where id=#{id}
+		</delete>
+		
+		
+		<select id="getProductById" resultType="Product">
+			select  * from  easybuy_product where id=#{id}
+		</select>
+		
+		<select id="getProductList"  resultType="Product">
+			select p.* from  easybuy_product p where 1=1
+			<if test="proName!=null and proName !=''">
+				and p.name like CONCAT ('%',#{proName},'%')
+			</if>
+			<if test="level==1 and categoryId !=null">
+				and p.categoryLevel1Id=#{categoryId}
+			</if>
+			<if test="level==2 and categoryId !=null">
+				and p.categoryLevel2Id=#{categoryId}
+			</if>
+			<if test="level==3 and categoryId !=null">
+				and p.categoryLevel1Id=#{categoryId}
+			</if>
+			limit #{from},#{pageSize}
+		</select>	
+		
+		<select id="queryProductCount" resultType="int">
+			select count(1) as count from easybuy_product p where 1=1
+			<if test="proName!=null and proName !=''">
+				and p.name like CONCAT ('%',#{proName},'%')
+			</if>
+			<if test="level==1 and categoryId !=null">
+				and p.categoryLevel1Id=#{categoryId}
+			</if>
+			<if test="level==2 and categoryId !=null">
+				and p.categoryLevel2Id=#{categoryId}
+			</if>
+			<if test="level==3 and categoryId !=null">
+				and p.categoryLevel1Id=#{categoryId}
+			</if>
+		</select>
+		
+		<update id="updateStock" >
+		update  easybuy_product p
+			<trim prefix="set" suffixOverrides=",">
+			<if test="quantity!=null" >
+				p.stock=#{quantity}
+			</if>
+			</trim>
+			where id=#{id}
+		</update>
+	
+</mapper>
